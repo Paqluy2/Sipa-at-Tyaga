@@ -129,6 +129,16 @@ try:
 except Exception:
     car_img = None
 
+try:
+    sfx_revive = pygame.mixer.Sound(os.path.join(audio_dir, "revive.wav"))
+    sfx_revive.set_volume(0.8)
+except Exception:
+    # Fallback to an existing sound if revive.wav does not exist yet
+    try:
+        sfx_revive = pygame.mixer.Sound(os.path.join(audio_dir, "fah.mp3"))
+    except Exception:
+        sfx_revive = None
+
 # --- GAME VARIABLES ---
 gravity = 0.2
 PIXELS_PER_METER = 80
@@ -224,17 +234,17 @@ rarity_colors = {
 }
 
 all_upgrades = [
-    {"id": "binti_2", "name": "Binti II", "rarity": "Uncommon", "desc": "+0.75 Power"},
-    {"id": "binti_1", "name": "Binti I", "rarity": "Common", "desc": "+0.5 Power"},
-    {"id": "binti_3", "name": "Binti III", "rarity": "Rare", "desc": "+1.25 Power"},
+    {"id": "binti_2", "name": "Binti II", "rarity": "Uncommon", "desc": "+2.5 Power"},
+    {"id": "binti_1", "name": "Binti I", "rarity": "Common", "desc": "+1.0 Power"},
+    {"id": "binti_3", "name": "Binti III", "rarity": "Rare", "desc": "+4.0 Power"},
     {"id": "tsinelas", "name": "Tsinelas", "rarity": "Rare", "desc": "+Perfect Hit Size"},
     {"id": "anting", "name": "Anting-Anting", "rarity": "Rare", "desc": "Chance for 2 Picks"},
     {"id": "buhay", "name": "Extra Buhay", "rarity": "Epic", "desc": "1 Auto-Revive"},
-    {"id": "binti_4", "name": "Binti IV", "rarity": "Epic", "desc": "+2.0 Power"},
+    {"id": "binti_4", "name": "Binti IV", "rarity": "Epic", "desc": "+5.0 Power"},
     {"id": "puntos_1", "name": "Doble Puntos I", "rarity": "Epic", "desc": "2x Score (1 Kick)"},
     {"id": "metro_1", "name": "Doble Metro I", "rarity": "Epic", "desc": "10% x2 Meter Gain"},
     {"id": "pampaswerte", "name": "Pampaswerte", "rarity": "Epic", "desc": "+10% Rare Chances"},
-    {"id": "binti_5", "name": "Binti V", "rarity": "Legendary", "desc": "+5.0 Power"},
+    {"id": "binti_5", "name": "Binti V", "rarity": "Legendary", "desc": "+8.0 Power"},
     {"id": "puntos_2", "name": "Doble Puntos II", "rarity": "Legendary", "desc": "2x Score (2 Kicks)"},
     {"id": "metro_2", "name": "Doble Metro II", "rarity": "Legendary", "desc": "20% x2 Meter Gain"},
     {"id": "yelo", "name": "Yelo (Press Y)", "rarity": "Legendary", "desc": "Stop Sipa Mid-Air"}
@@ -293,7 +303,7 @@ def reset_game():
     upgrades_acquired = 0 
     
     # Custom Modifiers
-    extra_lives = 0
+    extra_lives = 1
     extra_buhay_picked = False
     anting_chance = 0.0
     doble_metro_chance = 0.0
@@ -570,6 +580,10 @@ while True:
         if sipa_y > dis_height: 
             if extra_lives > 0:
                 extra_lives -= 1
+
+                if sfx_revive:
+                    sfx_revive.play()
+
                 sipa_y = dis_height - 150
                 sipa_vel_y = bounce_power * 1.5 # Auto bounce back
                 feedback_text = "EXTRA BUHAY!"
