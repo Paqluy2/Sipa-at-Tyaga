@@ -25,14 +25,14 @@ red, green, yellow, purple, orange = (255, 50, 50), (50, 255, 50), (255, 215, 0)
 
 
 try:
-    font_title    = pygame.font.Font(font_file, 50) # Main big titles
-    font_hud      = pygame.font.Font(font_file, 28)  # Score, altitude HUD
-    font_button   = pygame.font.Font(font_file, 24)  # Button text (PLAY, PAUSE, MENU)
-    font_card     = pygame.font.Font(font_file, 16)  # Card titles & desc
-    font_feedback = pygame.font.Font(font_file, 32)  # "LUPIT!", "AYOS!"
-    font_sub      = pygame.font.Font(font_file, 14)  # Prompts, subtext
-    font_pause     = pygame.font.Font(font_file, 80)  # PAUSED overlay
-    font_quit      = pygame.font.Font(font_file, 20)  # Quit prompt
+    font_title    = pygame.font.Font(font_file, 50) 
+    font_hud      = pygame.font.Font(font_file, 28)  
+    font_button   = pygame.font.Font(font_file, 24) 
+    font_card     = pygame.font.Font(font_file, 16)  
+    font_feedback = pygame.font.Font(font_file, 32)  
+    font_sub      = pygame.font.Font(font_file, 14)  
+    font_pause     = pygame.font.Font(font_file, 80) 
+    font_quit      = pygame.font.Font(font_file, 20)  
 except FileNotFoundError:
     font_title    = pygame.font.Font(None, 48)
     font_hud      = pygame.font.Font(None, 32)
@@ -40,8 +40,8 @@ except FileNotFoundError:
     font_card     = pygame.font.Font(None, 18)
     font_feedback = pygame.font.Font(None, 36)
     font_sub      = pygame.font.Font(None, 16)
-    font_pause     = pygame.font.Font(None, 40)  # PAUSED overlay
-    font_quit      = pygame.font.Font(None, 20)  # Quit prompt
+    font_pause     = pygame.font.Font(None, 40)  
+    font_quit      = pygame.font.Font(None, 20)  
 
 # --- BACKGROUND TOWER ---
 try:
@@ -76,15 +76,15 @@ except FileNotFoundError:
 try:
     bird_img = pygame.transform.scale(
         pygame.image.load(os.path.join(img_dir, "bird.png")).convert_alpha(),
-        (48, 36)  # Pixel size for the bird
+        (48, 36)  
     )
     bird_loaded = True
 except (FileNotFoundError, pygame.error):
     bird_loaded = False
 
-# --- LOGO ASSET ---
+
 try:
-    # Adjust width & height (e.g., 420x140) to match your logo sprite proportions
+
     logo_raw = pygame.image.load(os.path.join(img_dir, "logo.png")).convert_alpha()
     logo_width = 420
     logo_height = int(logo_raw.get_height() * (logo_width / logo_raw.get_width()))
@@ -101,14 +101,14 @@ try:
     sfx_kick      = pygame.mixer.Sound(os.path.join(audio_dir, "kick.wav"))
     sfx_select    = pygame.mixer.Sound(os.path.join(audio_dir, "select_4.wav"))
 
-    # Background music for Menu
+
     menu_music_path = os.path.join(audio_dir, "Honobono Teahouse.mp3")
     pygame.mixer.music.load(menu_music_path)
     pygame.mixer.music.play(-1)  # Loop continuously
     music_playing = True
 except (pygame.error, FileNotFoundError) as e:
     print(f"Audio Load Warning: {e}")
-    # Safe dummy sound fallback
+
     class DummySound:
         def play(self): pass
     sfx_card_draw = sfx_card_fan = sfx_fah = sfx_ice = sfx_kick = sfx_select = DummySound()
@@ -133,7 +133,6 @@ try:
     sfx_revive = pygame.mixer.Sound(os.path.join(audio_dir, "revive.wav"))
     sfx_revive.set_volume(0.8)
 except Exception:
-    # Fallback to an existing sound if revive.wav does not exist yet
     try:
         sfx_revive = pygame.mixer.Sound(os.path.join(audio_dir, "fah.mp3"))
     except Exception:
@@ -174,7 +173,7 @@ bird_base_y = 120
 bird_speed = 2.5
 bird_timer = 0
 
-# --- PWEDE MAG TANONG EASTER EGG QUIZ ---
+# --- SECRET QUIZ ---
 SECRET_UPGRADE_CHANCE = 0.1
 quiz_active = False
 quiz_answered = False
@@ -183,17 +182,17 @@ quiz_result_timer = 0
 
 # --- CAR CUTSCENE ANIMATION VARIABLES ---
 car_x = -350
-car_target_x = 220    # Spot right next to the player
-car_speed = 10        # Driving speed
+car_target_x = 220    
+car_speed = 10        
 car_arrived = False
 
-# Clickable trigger spot on the Main Menu (e.g. Aling Nena's Sari-Sari Store window)
+
 sari_store_trigger_rect = pygame.Rect(270, 240, 150, 100)
 
 quiz_question = "Pwede magtanong?"
 quiz_options = [
     {"text": "A. Hindi nag Grow", "correct": False},
-    {"text": "B. Never Grow Old", "correct": True},  # Correct lyric
+    {"text": "B. Never Grow Old", "correct": True},  
     {"text": "C. Never Enough.", "correct": False}
 ]
 
@@ -303,7 +302,7 @@ def reset_game():
     upgrades_acquired = 0 
     
     # Custom Modifiers
-    extra_lives = 1
+    extra_lives = 0
     extra_buhay_picked = False
     anting_chance = 0.0
     doble_metro_chance = 0.0
@@ -595,14 +594,10 @@ while True:
                     save_highscore(highscore)
                 game_state = "GAME_OVER"
 
-    # ==========================================
-    # 3. RENDERING PHASE
-    # ==========================================
+
     screen.fill(black) 
     
-    # ------------------------------------------
-    # LAYER 1: BACKGROUNDS
-    # ------------------------------------------
+
     if game_state == "MAIN_MENU":
         if bgs_loaded:
             screen.blit(bg_tower[0], (0, 0))
@@ -645,9 +640,7 @@ while True:
         else:
             pygame.draw.rect(screen, sky_blue, pygame.Rect(0, -dis_height - camera_y, dis_width, dis_height))
 
-    # ------------------------------------------
-    # LAYER 2: CHARACTERS & GAMEPLAY OBJECTS
-    # ------------------------------------------
+
     if game_state in ["PLAYING", "PAUSED", "GAME_OVER", "UPGRADE"]:
         if assets_loaded:
             if is_kicking:
@@ -672,9 +665,7 @@ while True:
             screen.blit(rotated_sipa, rot_rect.topleft)
         else: 
             pygame.draw.circle(screen, red, (int(sipa_x), int(sipa_y) - camera_y), sipa_radius)
-    # ------------------------------------------
-    # LAYER 3: UI, MENUS, & OVERLAYS
-    # ------------------------------------------
+
     if game_state == "MAIN_MENU":
         import math
         menu_timer += 0.05
@@ -784,21 +775,20 @@ while True:
                 key_txt    = font_sub.render(f"Press {i+1}", True, yellow)
 
     elif game_state == "CAR_CUTSCENE":
-        # 1. Paggalaw ng kotse papunta sa player
+
         if car_x < car_target_x:
             car_x += car_speed
             if car_x >= car_target_x:
                 car_x = car_target_x
         else:
-            # Nakahinto na ang kotse sa tabi ng player, magbibilang sandali
+           
             car_wait_timer -= 1
             if car_wait_timer <= 0:
-                # Patugtugin ang sfx/audio snippet paglabas ng dialog
+                
                 if pwede_loaded:
                     sfx_pwede.play()
                 game_state = "SECRET_QUIZ"
 
-        # 2. I-drawing ang Kotse sa lapag
         car_draw_y = dis_height - 180
         if car_img:
             screen.blit(car_img, (car_x, car_draw_y))
@@ -810,13 +800,13 @@ while True:
     elif game_state == "SECRET_QUIZ":
         car_draw_y = dis_height - 180
 
-        # 1. Drive car towards player
+
         if car_x < car_target_x:
             car_x += car_speed
             if car_x >= car_target_x:
                 car_x = car_target_x
                 car_arrived = True
-                # Play audio the moment the car arrives
+
                 if pwede_loaded:
                     sfx_pwede.play()
 
@@ -826,7 +816,6 @@ while True:
         else:
             pygame.draw.rect(screen, (40, 40, 180), (car_x, car_draw_y + 30, 220, 70), border_radius=8)
 
-        # 3. Only show quiz dialog AFTER the car reaches the player
         if car_arrived:
             modal_overlay = pygame.Surface((dis_width, dis_height), pygame.SRCALPHA)
             modal_overlay.fill((0, 0, 0, 200))
